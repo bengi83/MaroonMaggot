@@ -21,6 +21,7 @@ namespace MaroonMaggot.Web.Api
         public async Task<IActionResult> List()
         {
             var accountDTOs = (await _repository.ListAsync())
+                .Where(a => a.ParentAccount == null)
                 .Select(account => new AccountDTO
                 {
                     Id = account.Id,

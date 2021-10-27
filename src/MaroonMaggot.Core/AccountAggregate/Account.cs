@@ -1,8 +1,6 @@
 ﻿using Ardalis.GuardClauses;
-using MaroonMaggot.Core.AccountAggregate.Events;
 using MaroonMaggot.SharedKernel;
 using MaroonMaggot.SharedKernel.Interfaces;
-using System.Collections.Generic;
 
 namespace MaroonMaggot.Core.AccountAggregate
 {
@@ -10,41 +8,41 @@ namespace MaroonMaggot.Core.AccountAggregate
     {
         #region Class Data
 
-        private List<Account> _subAccounts = new();
-
         #endregion
 
         #region Properties
 
         public string Name { get; private set; }
-        public IEnumerable<Account> SubAccounts => _subAccounts.AsReadOnly();
+        public Account? ParentAccount { get; private set; }
 
         #endregion
 
         #region Constructor
 
-        public Account(string name)
+        public Account(string name, Account? parentAccount = null)
         {
             Name = Guard.Against.NullOrEmpty(name, nameof(name));
+            ParentAccount = parentAccount;
         }
 
         #endregion
 
-        #region MyRegion
-
-        public void AddSubAccount(Account subAccount)
-        {
-            Guard.Against.Null(subAccount, nameof(subAccount));
-            _subAccounts.Add(subAccount);
-
-            var subAccountAddedEvent = new SubAccountAddedEvent(this, subAccount);
-            Events.Add(subAccountAddedEvent);
-        }
+        #region Methods
 
         public void UpdateName(string newName)
         {
             Name = Guard.Against.NullOrEmpty(newName, nameof(newName));
-        } 
+        }
+
+        public void ClearParentAccount()
+        {
+            ParentAccount = null;
+        }
+
+        public void SetParentAccount(Account parentAccount)
+        {
+            ParentAccount = parentAccount;
+        }
 
         #endregion
     }
